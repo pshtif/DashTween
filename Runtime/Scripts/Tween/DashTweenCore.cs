@@ -19,7 +19,7 @@ namespace Dash
         [NonSerialized]
         private static bool _initialized = false;
 
-        public bool useScaledTime = true;
+        public static bool useScaledTime = true;
 
         public static void Initialize()
         {
