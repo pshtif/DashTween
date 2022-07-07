@@ -16,6 +16,8 @@ namespace Dash
 {
     public class DashTweenCore : MonoBehaviour
     {
+        public const string VERSION = "0.1.4";
+        
         [NonSerialized]
         private static bool _initialized = false;
 
@@ -61,19 +63,15 @@ namespace Dash
 
         static void UpdateInternal(float p_delta)
         {
-            var cloned = DashTween._activeTweens.ToList();
+            for (int i = DashTween._activeTweens.Count-1; i >= 0; i--)
+            {
+                ((IInternalTweenAccess)DashTween._activeTweens[i]).Update(p_delta);
+            }
+            /*var cloned = DashTween._activeTweens.ToList();
             cloned.ForEach(t =>
             {
                 ((IInternalTweenAccess)t).Update(p_delta);
-            });
-            // for (int i = 0; i < cloned.Count; i++)
-            // {
-            //     if (((IInternalTweenAccess) DashTween.coned[i]).Update(p_delta))
-            //     {
-            //         // In place removing of completed tweens
-            //         i--;
-            //     }
-            // }
+            });*/
         }
         
         #if UNITY_EDITOR
