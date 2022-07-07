@@ -1,7 +1,7 @@
 {
   "name": "com.shtif.dashtween",
   "displayName": "Dash Tween",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "unity": "2019.4",
   "description": "Dash Tween library primarily used for Dash Animation System but can be used standalone for programatic animations.",
   "author": {
