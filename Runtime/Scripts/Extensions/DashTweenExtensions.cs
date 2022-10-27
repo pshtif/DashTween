@@ -11,7 +11,7 @@ namespace Dash
     {
         static public bool DoNullChecks = false;
         
-        public static DashTween DashLocalRotate(this Transform p_transform, Vector3 p_rotation, float p_time)
+        public static DashTween DashLocalRotate(this Transform p_transform, Vector3 p_rotation, float p_time, bool p_useSpeed = false)
         {
             var original = p_transform.localRotation.eulerAngles;
             var tween = DashTween.To(p_transform, p_transform.localRotation.eulerAngles, p_rotation, p_time);
@@ -26,7 +26,7 @@ namespace Dash
             return tween;
         }
         
-        public static DashTween DashRotate(this Transform p_transform, Vector3 p_rotation, float p_time)
+        public static DashTween DashRotate(this Transform p_transform, Vector3 p_rotation, float p_time, bool p_useSpeed = false)
         {
             var original = p_transform.rotation.eulerAngles;
             var tween = DashTween.To(p_transform, p_transform.rotation.eulerAngles, p_rotation, p_time);
@@ -41,7 +41,7 @@ namespace Dash
             return tween;
         }
         
-        public static DashTween DashMove(this Transform p_transform, Vector3 p_position, float p_time)
+        public static DashTween DashMove(this Transform p_transform, Vector3 p_position, float p_time, bool p_useSpeed = false)
         {
             var original = p_transform.position;
             var tween = DashTween.To(p_transform, p_transform.position, p_position, p_time);
@@ -56,7 +56,7 @@ namespace Dash
             return tween;
         }
         
-        public static DashTween DashLocalMove(this Transform p_transform, Vector3 p_position, float p_time)
+        public static DashTween DashLocalMove(this Transform p_transform, Vector3 p_position, float p_time, bool p_useSpeed = false)
         {
             var original = p_transform.localPosition;
             var tween = DashTween.To(p_transform, p_transform.localPosition, p_position, p_time);
