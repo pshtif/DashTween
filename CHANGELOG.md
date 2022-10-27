@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## RELEASE CANDIDATES
 
+### 0.1.6 - 27.10.2022
+
+#### Added
+
+- added useSpeed for speed based tweening
+
 ### 0.1.5 - 08.07.2021
 
 #### Added
-- more extension methods
+- added more extension methods
 
 #### Changed
-- iteration without additional allocation
+- changed iteration without additional allocation
