@@ -13,6 +13,7 @@ namespace Dash
     enum DashTweenType
     {
         FLOAT,
+        VECTOR2,
         VECTOR3,
         COLOR
     }
@@ -31,6 +32,9 @@ namespace Dash
         public float from { get; private set; }
         public float to { get; private set; }
         
+        public Vector2 fromVector2 { get; private set; }
+        public Vector2 toVector2 { get; private set; }
+        
         public Vector3 fromVector { get; private set; }
         public Vector3 toVector { get; private set; }
         
@@ -46,6 +50,8 @@ namespace Dash
         public bool running { get; private set; } = false;
 
         public bool relative { get; private set; } = false;
+
+        public bool useSpeed { get; private set; } = false;
 
         private Action<float> _updateCallbackFloat;
         private Action<Vector2> _updateCallbackVector2;
@@ -110,6 +116,30 @@ namespace Dash
             tween.target = p_target;
             tween.from = p_from;
             tween.to = p_to;
+            tween.duration = p_duration;
+            
+            _activeTweens.Add(tween);
+
+            return tween;
+        }
+        
+        private static DashTween Create(Object p_target, Vector2 p_from, Vector2 p_to, float p_duration)
+        {
+            DashTween tween;
+            if (_pooledTweens.Count == 0)
+            {
+                tween = new DashTween();
+            }
+            else
+            {
+                tween = _pooledTweens.Dequeue();
+                tween.Reset();
+            }
+            
+            tween.type = DashTweenType.VECTOR2;
+            tween.target = p_target;
+            tween.fromVector2 = p_from;
+            tween.toVector2 = p_to;
             tween.duration = p_duration;
             
             _activeTweens.Add(tween);
@@ -201,6 +231,12 @@ namespace Dash
             relative = p_relative;
             return this;
         }
+        
+        public DashTween SetUseSpeed(bool p_useSpeed)
+        {
+            useSpeed = p_useSpeed;
+            return this;
+        }
 
         public DashTween OnUpdate(Action<float> p_callback)
         {
@@ -260,13 +296,14 @@ namespace Dash
         {
             if (duration == 0 && delay == 0)
             {
+                if (useSpeed) Debug.LogWarning("Infinite tween with 0 speed.");
                 CallUpdate(1);
-
                 _completeCallback?.Invoke();
                 Clean();
             }
             else
             {
+                if (useSpeed) CalculateDurationFromSpeed();
                 CallUpdate(0);
                 running = true;
             }
@@ -318,6 +355,13 @@ namespace Dash
                 _updateCallbackFloat?.Invoke(f);
             } 
             
+            if (type == DashTweenType.VECTOR2)
+            {
+                var v2 = EaseValue(relative ? Vector2.zero : fromVector2, toVector2, p_time, easeType);
+                _updateInternalCallbackVector2?.Invoke(v2);
+                _updateCallbackVector2?.Invoke(v2);
+            }
+            
             if (type == DashTweenType.VECTOR3)
             {
                 var v3 = EaseValue(relative ? Vector3.zero : fromVector, toVector, p_time, easeType);
@@ -330,6 +374,25 @@ namespace Dash
                 var c = EaseValue(relative ? Color.clear : fromColor, toColor, p_time, easeType);
                 _updateInternalCallbackColor?.Invoke(c);
                 _updateCallbackColor?.Invoke(c);
+            }
+        }
+
+        void CalculateDurationFromSpeed()
+        {
+            switch (type)
+            {
+                case DashTweenType.FLOAT:
+                    duration = Mathf.Abs(to - from) / duration;
+                    break;
+                case DashTweenType.VECTOR2:
+                    duration = (toVector2 - fromVector2).magnitude / duration;
+                    break;
+                case DashTweenType.VECTOR3:
+                    duration = (toVector - fromVector).magnitude / duration;
+                    break;
+                case DashTweenType.COLOR:
+                    Debug.LogWarning("Speed based tweening not implemented for colors.");
+                    break;
             }
         }
         
@@ -353,6 +416,13 @@ namespace Dash
         public static float EaseValue(float p_from, float p_to, float p_delta, EaseType p_easeType)
         {
             return p_from + (p_to - p_from) * EaseFunctions.Evaluate(p_delta, 1f, p_easeType);
+        }
+        
+        public static Vector2 EaseValue(Vector2 p_from, Vector2 p_to, float p_delta, EaseType p_easeType)
+        {
+            float e = EaseFunctions.Evaluate(p_delta, 1f, p_easeType);
+            return new Vector2(p_from.x + (p_to.x - p_from.x) * e,
+                p_from.y + (p_to.y - p_from.y) * e);
         }
         
         public static Vector3 EaseValue(Vector3 p_from, Vector3 p_to, float p_delta, EaseType p_easeType)
