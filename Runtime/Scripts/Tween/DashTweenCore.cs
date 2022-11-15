@@ -3,10 +3,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -65,13 +62,14 @@ namespace Dash
         {
             for (int i = DashTween._activeTweens.Count-1; i >= 0; i--)
             {
-                ((IInternalTweenAccess)DashTween._activeTweens[i]).Update(p_delta);
+                DashTween._activeTweens[i].Update(p_delta);
             }
-            /*var cloned = DashTween._activeTweens.ToList();
-            cloned.ForEach(t =>
+
+            foreach (var tween in DashTween._dirtyTweens)
             {
-                ((IInternalTweenAccess)t).Update(p_delta);
-            });*/
+                tween.Remove();
+            }
+            DashTween._dirtyTweens.Clear();
         }
         
         #if UNITY_EDITOR

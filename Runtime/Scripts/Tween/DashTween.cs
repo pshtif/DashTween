@@ -18,11 +18,13 @@ namespace Dash
         COLOR
     }
     
-    public class DashTween : IInternalTweenAccess
+    public class DashTween 
     {
         static internal List<DashTween> _activeTweens = new List<DashTween>();
 
-        static private Queue<DashTween> _pooledTweens = new Queue<DashTween>();
+        static internal List<DashTween> _dirtyTweens = new List<DashTween>();
+
+        static internal Queue<DashTween> _pooledTweens = new Queue<DashTween>();
 
         private DashTweenType type = DashTweenType.FLOAT;
         
@@ -323,9 +325,9 @@ namespace Dash
             Clean();
         }
 
-        void IInternalTweenAccess.Update(float p_time)
+        internal void Update(float p_time)
         {
-            if (!running)
+            if (!running || !_active)
                 return;
 
             current += p_time;
@@ -344,6 +346,12 @@ namespace Dash
             {
                 CallUpdate((current - delay) / duration);
             }
+        }
+
+        internal void Remove()
+        {
+            _activeTweens.Remove(this);
+            _pooledTweens.Enqueue(this);
         }
 
         void CallUpdate(float p_time)
@@ -403,8 +411,8 @@ namespace Dash
             
             _active = false;
             running = false;
-            _activeTweens.Remove(this);
-            _pooledTweens.Enqueue(this);
+            
+            _dirtyTweens.Add(this);
         }
 
         public static void CleanAll()
