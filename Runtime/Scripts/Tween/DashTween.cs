@@ -300,8 +300,7 @@ namespace Dash
             {
                 if (useSpeed) Debug.LogWarning("Infinite tween with 0 speed.");
                 CallUpdate(1);
-                _completeCallback?.Invoke();
-                Clean();
+                Complete();
             }
             else
             {
@@ -319,32 +318,30 @@ namespace Dash
             {
                 current = duration + delay;
                 CallUpdate((current - delay) / duration);
-                _completeCallback?.Invoke();
+                Complete();
             }
-            
-            Clean();
+            else
+            {
+                Clean();
+            }
         }
 
         internal void Update(float p_time)
         {
-            if (!running || !_active)
-                return;
-
-            current += p_time;
-            if (current >= duration + delay)
+            if (running && _active)
             {
-                current = duration + delay;
+                current += p_time;
+                if (current >= duration + delay)
+                {
+                    current = duration + delay;
                 
-                CallUpdate((current - delay) / duration);
-                _completeCallback?.Invoke();
-                Clean();
-
-                return;
-            }
-            
-            if (current > delay)
-            {
-                CallUpdate((current - delay) / duration);
+                    CallUpdate((current - delay) / duration);
+                    Complete();
+                } 
+                else if (current > delay)
+                {
+                    CallUpdate((current - delay) / duration);
+                }
             }
         }
 
@@ -354,6 +351,12 @@ namespace Dash
             _pooledTweens.Enqueue(this);
         }
 
+        void Complete()
+        {
+            _completeCallback?.Invoke();
+            Clean();
+        }
+        
         void CallUpdate(float p_time)
         {
             if (type == DashTweenType.FLOAT)
@@ -406,19 +409,20 @@ namespace Dash
         
         void Clean()
         {
-            if (!_active)
-                return;
-            
-            _active = false;
-            running = false;
-            
-            _dirtyTweens.Add(this);
+            if (_active)
+            {
+                _active = false;
+                running = false;
+
+                _dirtyTweens.Add(this);
+            }
         }
 
         public static void CleanAll()
         {
             _activeTweens.Clear();
             _pooledTweens.Clear();
+            _dirtyTweens.Clear();
         }
 
         public static float EaseValue(float p_from, float p_to, float p_delta, EaseType p_easeType)
