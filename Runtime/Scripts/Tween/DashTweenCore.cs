@@ -13,7 +13,7 @@ namespace Dash
 {
     public class DashTweenCore : MonoBehaviour
     {
-        public const string VERSION = "0.1.7";
+        public const string VERSION = "0.1.8";
         
         [NonSerialized]
         private static bool _initialized = false;
