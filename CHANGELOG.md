@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## RELEASE CANDIDATES
 
+### 0.1.9
+
+#### Changed
+
+- changed DashTweenCore Reset method is now accessible runtime
+
+### 0.1.8
+
+#### Added
+
+- added some wip debugging for tweens
+
+#### Changed
+
+- changed how tweens are cleaned to avoid cleaning dependency in middle of update cycle
+- changed interface access changed to internal
+
 ### 0.1.7 - 27.10.2022
 
 #### Added
