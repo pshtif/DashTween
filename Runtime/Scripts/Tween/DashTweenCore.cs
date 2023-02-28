@@ -45,13 +45,11 @@ namespace Dash
             }
         }
         
-        #if UNITY_EDITOR
-        public static void Uninitialize()
+        public static void Reset()
         {
             _initialized = false;
-            EditorApplication.update -= UpdateEditor;
+            DashTween.CleanAll();
         }
-        #endif
 
         void Update()
         {
@@ -73,12 +71,13 @@ namespace Dash
         }
         
         #if UNITY_EDITOR
-        public static void Reset()
+        
+        public static void Uninitialize()
         {
             _initialized = false;
-            DashTween.CleanAll();
+            EditorApplication.update -= UpdateEditor;
         }
-        
+
         private static double _currentTime = 0;
         
         private static void UpdateEditor()
@@ -89,6 +88,6 @@ namespace Dash
             
             _currentTime = EditorApplication.timeSinceStartup;
         }
-        #endif
+#endif
     }
 }
