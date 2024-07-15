@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## RELEASE CANDIDATES
 
+### 0.1.10
+
+- changed DashTweenCore no longer uses HideFlags.HideAndDontSave due to Unity issue
+
 ### 0.1.9
 
 #### Changed
