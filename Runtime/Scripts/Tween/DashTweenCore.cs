@@ -28,7 +28,7 @@ namespace Dash
                 {
                     var go = new GameObject();
                     go.name = "DashTweenCore";
-                    go.hideFlags = HideFlags.HideAndDontSave;
+                    // go.hideFlags = HideFlags.HideAndDontSave;
                     go.AddComponent<DashTweenCore>();
                     DontDestroyOnLoad(go);
                 }
